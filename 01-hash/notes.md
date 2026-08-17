@@ -22,3 +22,11 @@
 6. map.values() 返回的是 Collection，因此返回 List<List<String>> 时可写：
    new ArrayList<>(map.values())
 
+## 128 Longest Consecutive Sequence
+1. Set 是接口，不能写 new Set<>()，应使用 new HashSet<>()。
+2. set.contains(num) 可以快速判断某个数字是否存在。
+3. 只有当 num - 1 不存在时，才从 num 开始向后查找，避免重复计算连续序列。
+4. 连续序列长度从 1 开始，因为起点 num 本身已经算一个元素。
+5. 使用 while (set.contains(currentNum + 1)) 不断向后查找连续数字。
+6. 建立 HashSet 后，后续应遍历 Set 而不是原数组 nums，可以去除重复数字，避免同一连续序列被重复扫描。
+7. HashSet 的查找平均时间复杂度为 O(1)，因此整体平均时间复杂度可以达到 O(n)。
