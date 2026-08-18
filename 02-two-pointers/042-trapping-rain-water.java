@@ -1,55 +1,58 @@
 /*
-思路：
-
-最开始想从左右两边向中间移动。
-
-1. left 和 right 表示当前左右边界。
-2. 两边较矮的柱子决定当前能够达到的水位：
-   lower = min(height[left], height[right])
-3. 遍历中间比 lower 矮的位置，计算可以填入的水。
-4. 最开始通过 height[h] = lower 模拟已经填入的水。
-5. 后来发现这种方法会反复遍历中间区间，可以进一步优化成标准双指针。
-*/
+ * LeetCode 42. Trapping Rain Water
+ *
+ * 思路：
+ * 使用双指针从数组两端向中间移动。
+ * leftMax 记录左侧遇到的最高柱子，rightMax 记录右侧遇到的最高柱子。
+ * 如果 height[left] < height[right]，说明当前左侧水量可以确定；
+ * 否则处理右侧。
+ *
+ * 当前柱子低于对应最大高度时：
+ * rain += maxHeight - height[i]
+ *
+ * 注意：
+ * - left、right 是数组下标。
+ * - leftMax、rightMax 是柱子高度，不能作为数组下标使用。
+ * - 每轮只处理较矮的一侧，不需要扫描中间区域。
+ * - 不需要修改原 height 数组。
+ *
+ * 时间复杂度：O(n)
+ * 空间复杂度：O(1)
+ */
 
 class Solution {
     public int trap(int[] height) {
+
         int left = 0;
         int right = height.length - 1;
+
+        int leftMax = 0;
+        int rightMax = 0;
 
         int rain = 0;
 
         while (left < right) {
-            while (height[left] == 0 && left < right) {
-                left++;
-            }
 
-            while (height[right] == 0 && left < right ) {
-                right--;
-            }
-
-            int lower = Math.min(height[left], height[right]);
-
-            for (int h = left + 1; h < right; h++) {
-                if (height[h] < lower) {
-                    rain = rain + lower - height[h];
-                    height[h] = lower;
-                }
-            }
-            // 移动更矮的那边
+            // 左边更矮，当前 left 位置的水量可以确定
             if (height[left] < height[right]) {
+
+                if (height[left] < leftMax) {
+                    rain += leftMax - height[left];
+                } else {
+                    leftMax = height[left];
+                }
+
                 left++;
-            } else if (height[left] > height[right]) {
-                right--;
+
             } else {
-                left++;
-                right--;
-            }
 
-            while (left > 0 && left < right && height[left] == height[left - 1]) {
-                left++;
-            }
+                // 右边更矮或相等，当前 right 位置的水量可以确定
+                if (height[right] < rightMax) {
+                    rain += rightMax - height[right];
+                } else {
+                    rightMax = height[right];
+                }
 
-            while (right < height.length - 1 && left < right && height[right] == height[right + 1]) {
                 right--;
             }
         }
